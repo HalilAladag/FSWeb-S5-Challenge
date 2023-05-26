@@ -1,3 +1,4 @@
+import axios from "axios";
 const Card = (makale) => {
   // GÖREV 5
   // ---------------------
@@ -17,9 +18,38 @@ const Card = (makale) => {
   //   </div>
   // </div>
   //
-}
+  const cardDiv = document.createElement("div");
+  cardDiv.classList.add("card");
 
-const cardEkleyici = (secici) => {
+  const headlineDiv = document.createElement("div");
+  headlineDiv.classList.add("headline");
+  headlineDiv.textContent = makale.anabaslik;
+  cardDiv.appendChild(headlineDiv);
+
+  const authorDiv = document.createElement("div");
+  authorDiv.classList.add("author");
+
+  const imgDiv = document.createElement("div");
+  imgDiv.classList.add("img-container");
+
+  const img = document.createElement("img");
+  img.src = makale.yazarFoto;
+  imgDiv.appendChild(img);
+
+  const span = document.createElement("span");
+  span.textContent = makale.yazarAdi + " tarafından";
+  authorDiv.appendChild(imgDiv);
+  authorDiv.appendChild(span);
+  cardDiv.appendChild(authorDiv);
+  
+  cardDiv.addEventListener('click', function () {
+    console.log(makale.anabaslik);
+  });
+
+  return cardDiv;
+};
+
+const cardEkleyici = async (secici) => {
   // GÖREV 6
   // ---------------------
   // Tek bağımsız değişkeni olarak bir css seçici alan bu fonksiyonu uygulayın.
@@ -28,6 +58,16 @@ const cardEkleyici = (secici) => {
   // Card bileşenini kullanarak yanıttaki her makale nesnesinden bir kart oluşturun.
   // Her cardı, fonksiyona iletilen seçiciyle eşleşen DOM'daki öğeye ekleyin.
   //
+  axios.get("http://localhost:5001/api/makaleler")
+    .then((res) => {
+      const makaleler = res.data.makaleler;
+      for (let category in makaleler) {
+        makaleler[category].forEach((makale) => {
+          const card = Card(makale);
+          document.querySelector(secici).append(card);
+        })
+      };
+    })
 }
 
 export { Card, cardEkleyici }
